@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 
 export default defineConfig({
   // Project root — where index.html lives
@@ -17,6 +18,12 @@ export default defineConfig({
     emptyOutDir: true,
     // Inline assets smaller than 4kb (icons, small images)
     assetsInlineLimit: 4096,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        thankyou: resolve(__dirname, 'thank-you.html'),
+      },
+    },
   },
 
   // Preview server (after `npm run build`)

@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Redirect any 404s to the homepage (single-page-app style fallback)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404

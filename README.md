@@ -51,6 +51,51 @@ praxis-learning/
 
 ---
 
+---
+
+## 📬 Contact Form — Receiving Submissions in Gmail
+
+The contact form is wired up using **Netlify Forms** — no backend code or third-party service required. Netlify automatically detects the form at build time because it includes:
+
+```html
+<form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" ...>
+```
+
+### To receive submissions in your Gmail inbox:
+
+1. Deploy the site to Netlify (push to GitHub, then connect the repo in Netlify — see below).
+2. In the Netlify dashboard, go to **Site settings → Forms → Form notifications**.
+3. Click **Add notification → Email notification**.
+4. Enter your **Gmail address** (e.g. `hello@praxislearning.co.uk` or any Gmail-hosted address).
+5. Select the `contact` form as the trigger.
+6. Save.
+
+From then on, every form submission is emailed directly to that Gmail inbox, and also stored under **Site → Forms** in the Netlify dashboard.
+
+### Spam protection
+A hidden **honeypot field** (`bot-field`) is included to filter out basic bots automatically — no extra setup needed.
+
+### Testing the form
+Netlify Forms only work once the site is **deployed on Netlify** (they don't work on `localhost` or other hosts). To test:
+1. Push your code to GitHub.
+2. Connect the repo to Netlify (drag-and-drop or Git integration).
+3. Visit the live `.netlify.app` URL and submit the form — it should redirect to `/thank-you` and the submission will appear in **Site → Forms → contact**.
+
+---
+
+## 🌐 Deploying to Netlify (recommended for this project)
+
+1. Push this project to GitHub (see below).
+2. Go to [app.netlify.com](https://app.netlify.com) → **Add new site → Import an existing project**.
+3. Connect your GitHub repo.
+4. Build settings (auto-detected from `netlify.toml`):
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+5. Click **Deploy site**.
+6. Once live, set up the email notification as described above.
+
+---
+
 ## 🌐 Deploying to GitHub Pages
 
 1. Install the GitHub Pages plugin:

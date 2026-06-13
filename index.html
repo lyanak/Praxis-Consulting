@@ -799,26 +799,44 @@ footer { background: #e8f4fb; color: #000000; padding: 64px 0 38px; border-top: 
       </div>
       <div class="contact-form">
         <div class="cf-title">Send us a message</div>
-        <div class="fg-row">
-          <div class="fg"><label>First Name</label><input type="text" placeholder="Your first name"></div>
-          <div class="fg"><label>Last Name</label><input type="text" placeholder="Your last name"></div>
-        </div>
-        <div class="fg"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
-        <div class="fg"><label>Organisation</label><input type="text" placeholder="Your organisation name"></div>
-        <div class="fg">
-          <label>How can we help?</label>
-          <select>
-            <option value="">Select an enquiry type…</option>
-            <option>Book a Consultation</option>
-            <option>Request a Quality Review</option>
-            <option>Schedule a Discovery Call</option>
-            <option>Higher Education Strategy &amp; Quality</option>
-            <option>Learning &amp; Workforce Development</option>
-            <option>General Enquiry</option>
-          </select>
-        </div>
-        <div class="fg"><label>Message</label><textarea placeholder="Tell us about your organisation and what you are looking to achieve…"></textarea></div>
-        <button class="cf-submit" id="submitBtn">Send Message</button>
+        <form
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          action="/thank-you"
+          id="contactForm"
+        >
+          <!-- Required hidden field so Netlify can identify the form -->
+          <input type="hidden" name="form-name" value="contact" />
+
+          <!-- Honeypot field to reduce spam (kept hidden via CSS) -->
+          <p style="display:none">
+            <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+          </p>
+
+          <div class="fg-row">
+            <div class="fg"><label>First Name</label><input type="text" name="first_name" placeholder="Your first name" required></div>
+            <div class="fg"><label>Last Name</label><input type="text" name="last_name" placeholder="Your last name" required></div>
+          </div>
+          <div class="fg"><label>Email Address</label><input type="email" name="email" placeholder="your@email.com" required></div>
+          <div class="fg"><label>Organisation</label><input type="text" name="organisation" placeholder="Your organisation name"></div>
+          <div class="fg">
+            <label>How can we help?</label>
+            <select name="enquiry_type">
+              <option value="">Select an enquiry type…</option>
+              <option>Book a Consultation</option>
+              <option>Request a Quality Review</option>
+              <option>Schedule a Discovery Call</option>
+              <option>Higher Education Strategy &amp; Quality</option>
+              <option>Learning &amp; Workforce Development</option>
+              <option>General Enquiry</option>
+            </select>
+          </div>
+          <div class="fg"><label>Message</label><textarea name="message" placeholder="Tell us about your organisation and what you are looking to achieve…" required></textarea></div>
+          <button type="submit" class="cf-submit" id="submitBtn">Send Message</button>
+          <div id="formStatus" style="margin-top:12px;font-size:13px;display:none;"></div>
+        </form>
       </div>
     </div>
   </div>
@@ -929,11 +947,44 @@ window.addEventListener('scroll', () => {
   });
 });
 
-/* Form feedback */
-document.getElementById('submitBtn').addEventListener('click', function () {
-  this.textContent = 'Message Sent \u2713';
-  this.style.background = 'var(--teal)';
-  setTimeout(() => { this.textContent = 'Send Message'; this.style.background = ''; }, 3000);
+/* ── Contact form: real Netlify Forms AJAX submission ── */
+const contactForm = document.getElementById('contactForm');
+const submitBtn   = document.getElementById('submitBtn');
+const formStatus  = document.getElementById('formStatus');
+
+contactForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const data = new FormData(contactForm);
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending…';
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(data).toString(),
+  })
+    .then(() => {
+      submitBtn.textContent = 'Message Sent \u2713';
+      submitBtn.style.background = 'var(--teal)';
+      formStatus.style.display = 'block';
+      formStatus.style.color = 'var(--teal)';
+      formStatus.textContent = 'Thank you — your message has been sent. We will be in touch shortly.';
+      contactForm.reset();
+      setTimeout(() => {
+        submitBtn.textContent = 'Send Message';
+        submitBtn.style.background = '';
+        submitBtn.disabled = false;
+      }, 3500);
+    })
+    .catch(() => {
+      submitBtn.textContent = 'Send Message';
+      submitBtn.disabled = false;
+      formStatus.style.display = 'block';
+      formStatus.style.color = '#b00020';
+      formStatus.textContent = 'Something went wrong. Please try again or email us directly.';
+    });
 });
 </script>
 </body>
